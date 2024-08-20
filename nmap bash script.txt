@@ -1,0 +1,84 @@
+nano website_scan.sh
+
+
+#!/bin/bash
+
+# Prompt for the IP address
+read -p "Enter the IP address of the website: " ip_address
+
+# Prompt for the report filename
+read -p "Enter the report filename (without extension): " report_filename
+
+# Define the path to the Desktop
+desktop_path="$HOME/Desktop"
+
+# Full path to the report file
+report_file="$desktop_path/${report_filename}.txt"
+
+# Create or clear the report file
+> "$report_file"
+
+echo "Running Nmap vulnerability scans on $ip_address..."
+echo "-----------------------------------------------" >> "$report_file"
+
+# Basic Port Scan
+echo "1. Basic Port Scan" >> "$report_file"
+nmap "$ip_address" >> "$report_file"
+echo -e "\n" >> "$report_file"
+
+# Service Version Detection
+echo "2. Service Version Detection" >> "$report_file"
+nmap -sV "$ip_address" >> "$report_file"
+echo -e "\n" >> "$report_file"
+
+# Operating System Detection
+echo "3. Operating System Detection" >> "$report_file"
+nmap -O "$ip_address" >> "$report_file"
+echo -e "\n" >> "$report_file"
+
+# Vulnerability Scanning with Scripts
+echo "4. Vulnerability Scanning with Scripts" >> "$report_file"
+nmap --script=vuln "$ip_address" >> "$report_file"
+echo -e "\n" >> "$report_file"
+
+# Scan for Common Web Vulnerabilities
+echo "5. Scan for Common Web Vulnerabilities" >> "$report_file"
+nmap --script=http-vuln-* "$ip_address" >> "$report_file"
+echo -e "\n" >> "$report_file"
+
+# Detect Heartbleed Vulnerability
+echo "6. Detect Heartbleed Vulnerability" >> "$report_file"
+nmap --script=ssl-heartbleed "$ip_address" >> "$report_file"
+echo -e "\n" >> "$report_file"
+
+# Scan for SQL Injection Vulnerabilities
+echo "7. Scan for SQL Injection Vulnerabilities" >> "$report_file"
+nmap --script=http-sql-injection "$ip_address" >> "$report_file"
+echo -e "\n" >> "$report_file"
+
+# Scan for Cross-Site Scripting (XSS) Vulnerabilities
+echo "8. Scan for Cross-Site Scripting (XSS) Vulnerabilities" >> "$report_file"
+nmap --script=http-stored-xss "$ip_address" >> "$report_file"
+echo -e "\n" >> "$report_file"
+
+# Brute Force Vulnerability Testing
+echo "9. Brute Force Vulnerability Testing" >> "$report_file"
+nmap --script=brute "$ip_address" >> "$report_file"
+echo -e "\n" >> "$report_file"
+
+# SSL/TLS Vulnerabilities
+echo "10. SSL/TLS Vulnerabilities" >> "$report_file"
+nmap --script=ssl-cert,ssl-enum-ciphers "$ip_address" >> "$report_file"
+echo -e "\n" >> "$report_file"
+
+# Scan for HTTP Security Headers
+echo "11. Scan for HTTP Security Headers" >> "$report_file"
+nmap --script=http-security-headers "$ip_address" >> "$report_file"
+echo -e "\n" >> "$report_file"
+
+echo "Vulnerability scan completed. Report saved to $report_file."
+
+
+chmod +x website_scan.sh
+
+./website_scan.sh
